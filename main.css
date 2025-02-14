@@ -1,0 +1,35 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  background-color: #d8d2d1;
+  font-size: clamp(16px, 1vw, 24px);
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+main {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+}
+
+.unicorn {
+  width: 600px;
+  height: 600px;
+  grid-area: 1 / 1;
+}
+
+
+@media (max-width: 800px) {
+  .unicorn {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+}
