@@ -383,14 +383,50 @@
       .flag { font-size: 1.875rem; }
     }
 
+    /* Mobile: single-column horizontal rows — each card becomes
+       a compact row with flag · name · code · arrow in one line. */
     @media (max-width: 640px) {
       body { padding: 3rem 1.125rem; }
       header { margin-bottom: 3.5rem; }
-      .grid { grid-template-columns: repeat(2, 1fr); }
-      .card { min-height: 10.5rem; padding: 1.125rem; }
-      .content { left: 1.125rem; right: 1.125rem; bottom: 1.125rem; }
-      .name { font-size: 1.1rem; }
-      .flag { font-size: 1.75rem; }
+      .grid { grid-template-columns: 1fr; gap: 0.5rem; }
+
+      .card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+        min-height: auto;
+        padding: 0.875rem 1.125rem;
+      }
+
+      .flag {
+        font-size: 1.625rem;
+        transform: translateZ(24px);
+        flex-shrink: 0;
+      }
+
+      .content {
+        position: static;          /* override desktop absolute positioning */
+        left: auto; right: auto; bottom: auto;
+        flex: 1;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        transform: translateZ(16px);
+      }
+
+      .name {
+        font-size: 1.0625rem;
+        flex: 1;
+        min-width: 0;              /* allow ellipsis inside flex child */
+      }
+
+      .meta {
+        height: auto;
+        gap: 0.625rem;
+        flex: none;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
