@@ -127,11 +127,6 @@
     }
 
     /* ——— Choreographed entrance ——— */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
     @keyframes logoAppear {
       0% {
         opacity: 0;
@@ -162,19 +157,6 @@
       margin-bottom: 5.5rem;
     }
 
-    .eyebrow {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 0.6875rem;
-      font-weight: 500;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 2rem;
-      line-height: 1;
-      animation: fadeUp 800ms var(--ease-out) 100ms both;
-    }
-
     h1 {
       margin: 0;
       line-height: 0;
@@ -187,7 +169,7 @@
       height: auto;
       user-select: none;
       -webkit-user-drag: none;
-      animation: logoAppear 1200ms var(--ease-out) 350ms both;
+      animation: logoAppear 1200ms var(--ease-out) 150ms both;
       will-change: filter, opacity, transform;
     }
 
@@ -204,7 +186,7 @@
     .grid > li {
       opacity: 0;
       animation: cardIn 900ms var(--ease-out) both;
-      animation-delay: calc(1000ms + var(--i, 0) * 80ms);
+      animation-delay: calc(800ms + var(--i, 0) * 80ms);
     }
 
     /* Each card is its own 3D scene — tilt uses --rx / --ry set by JS */
@@ -394,7 +376,6 @@
 
   <main>
     <header>
-      <span class="eyebrow">GMK · Extension Kit</span>
       <h1>
         <img
           class="logo"
