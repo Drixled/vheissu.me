@@ -189,14 +189,18 @@
       animation-delay: calc(800ms + var(--i, 0) * 80ms);
     }
 
-    /* Each card is its own 3D scene — tilt uses --rx / --ry set by JS */
+    /* Each card is its own 3D scene — tilt uses --rx / --ry set by JS.
+       Material: keycap-inspired. Top-left ambient light, top-edge glint,
+       bottom-edge shadow, layered drop shadow for sculpted depth. */
     .card {
       position: relative;
       display: block;
       padding: 1.5rem;
       min-height: 13rem;
-      background: linear-gradient(155deg, var(--bg-card-top) 0%, var(--bg-card-bot) 100%);
-      border: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse 85% 65% at 18% 8%, rgb(var(--fg-rgb) / 0.05), transparent 55%),
+        linear-gradient(165deg, #1a1a1a 0%, #0c0c0c 55%, #040404 100%);
+      border: 1px solid rgb(var(--fg-rgb) / 0.06);
       color: var(--fg);
       text-decoration: none;
       overflow: hidden;
@@ -208,25 +212,29 @@
         border-color 280ms var(--ease),
         box-shadow 300ms var(--ease);
       box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.35),
-        0 8px 24px rgba(0, 0, 0, 0.28);
+        inset 0  1px 0 rgb(var(--fg-rgb) / 0.06),   /* top-edge light glint */
+        inset 0 -1px 0 rgba(0, 0, 0, 0.5),           /* bottom-edge shadow */
+        0 1px 2px rgba(0, 0, 0, 0.4),
+        0 14px 32px rgba(0, 0, 0, 0.32);
       will-change: transform;
     }
 
-    /* Cursor-tracked shine inside card */
+    /* Cursor-tracked shine inside card — simulates light
+       sweeping across the polished keycap surface */
     .card::before {
       content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
       background: radial-gradient(
-        circle 240px at var(--mx, 50%) var(--my, 50%),
-        rgb(var(--fg-rgb) / 0.07),
+        circle 260px at var(--mx, 50%) var(--my, 50%),
+        rgb(var(--fg-rgb) / 0.09),
         transparent 55%
       );
       opacity: 0;
       transition: opacity 280ms var(--ease);
       z-index: 1;
+      mix-blend-mode: screen;
     }
 
     /* Ember glow at card base — intensifies on hover */
@@ -249,8 +257,10 @@
     .card:focus-visible {
       border-color: rgb(var(--accent-rgb) / 0.35);
       box-shadow:
-        0 2px 6px rgba(0, 0, 0, 0.45),
-        0 20px 56px rgb(var(--accent-rgb) / 0.18),
+        inset 0  1px 0 rgb(var(--fg-rgb) / 0.1),   /* brighter top glint on hover */
+        inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        0 28px 64px rgb(var(--accent-rgb) / 0.22),
         0 0 0 1px rgb(var(--accent-rgb) / 0.08);
     }
 
@@ -269,10 +279,13 @@
       position: relative;
       z-index: 2;
       display: inline-block;
-      font-size: 1.875rem;
+      font-size: 2rem;
       line-height: 1;
-      filter: saturate(0.72) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
-      transform: translateZ(40px);
+      filter:
+        saturate(0.72)
+        drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6))
+        drop-shadow(0 1px 2px rgba(0, 0, 0, 0.75));
+      transform: translateZ(45px);
       transition: filter 260ms var(--ease);
       font-family:
         "Apple Color Emoji",
@@ -284,7 +297,10 @@
 
     .card:hover .flag,
     .card:focus-visible .flag {
-      filter: saturate(1) drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
+      filter:
+        saturate(1)
+        drop-shadow(0 6px 18px rgba(0, 0, 0, 0.65))
+        drop-shadow(0 1px 3px rgba(0, 0, 0, 0.85));
     }
 
     .content {
@@ -355,7 +371,7 @@
       .card { min-height: 11rem; padding: 1.25rem; }
       .content { left: 1.25rem; right: 1.25rem; bottom: 1.25rem; }
       .name { font-size: 1.2rem; }
-      .flag { font-size: 1.625rem; }
+      .flag { font-size: 1.75rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
