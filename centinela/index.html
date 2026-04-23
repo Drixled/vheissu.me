@@ -208,7 +208,10 @@
       transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
       transform-style: preserve-3d;
       transform-origin: center center;
+      /* scale is a separate property — composes cleanly with the rAF-driven tilt transform */
+      scale: 1;
       transition:
+        scale 220ms var(--ease-out),
         border-color 280ms var(--ease),
         box-shadow 300ms var(--ease);
       box-shadow:
@@ -268,6 +271,15 @@
     .card:focus-visible::before { opacity: 1; }
     .card:hover::after,
     .card:focus-visible::after  { opacity: 1; }
+
+    /* Press feedback — asymmetric timing: fast in, slower release */
+    .card:active {
+      scale: 0.975;
+      transition:
+        scale 80ms var(--ease-out),
+        border-color 280ms var(--ease),
+        box-shadow 300ms var(--ease);
+    }
 
     .card:focus-visible {
       outline: 2px solid var(--accent);
@@ -482,6 +494,43 @@
   <script>
     (function () {
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var cards = document.querySelectorAll('.card');
+      if (!cards.length) return;
+      var burst = function () {}; // no-op fallback; overridden below if motion is enabled
+
+      /* ———————————————————————————————————————
+         CONSOLE SIGNATURE — tasteful dev easter egg
+         ——————————————————————————————————————— */
+      if (window.console && console.log) {
+        console.log(
+          '%c CENTINELA ',
+          'background:#c47a3f;color:#060606;padding:4px 12px;letter-spacing:0.3em;font-weight:700;font-family:monospace;'
+        );
+        console.log(
+          '%cPress 1–8 to dispatch a sentinel.',
+          'color:#8f8f8a;font-family:monospace;'
+        );
+      }
+
+      /* ———————————————————————————————————————
+         KEYBOARD SHORTCUTS — press 1–8 to activate
+         the matching vendor. Works regardless of
+         reduced-motion prefs (burst is a no-op in
+         that case).
+         ——————————————————————————————————————— */
+      document.addEventListener('keydown', function (e) {
+        if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+        var tag = e.target && e.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        var n = parseInt(e.key, 10);
+        if (!n || n < 1 || n > cards.length) return;
+        e.preventDefault();
+        var card = cards[n - 1];
+        burst(card);
+        // Brief delay so the burst is visible before navigation
+        setTimeout(function () { card.click(); }, reduced ? 0 : 40);
+      });
+
       if (reduced) return;
 
       /* ———————————————————————————————————————
@@ -648,11 +697,41 @@
       }, { passive: true });
 
       /* ———————————————————————————————————————
+         EMBER BURST — on card click or keyboard
+         activation, erupt a volley of embers from
+         the card's lower edge. "Dispatching a
+         sentinel" — thematic click feedback.
+         ——————————————————————————————————————— */
+      burst = function (card) {
+        var r = card.getBoundingClientRect();
+        var bcx = r.left + r.width / 2;
+        var bcy = r.top + r.height * 0.72;
+        for (var i = 0; i < 14; i++) {
+          var angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.8;
+          var speed = 0.9 + Math.random() * 1.7;
+          particles.push({
+            x: bcx + (Math.random() - 0.5) * 18,
+            y: bcy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: Math.random() * 3.2 + 1.8,
+            life: Math.random() * 160 + 140,
+            age: 0,
+            drift: Math.random() * Math.PI * 2,
+            sprite: pickSprite(),
+          });
+        }
+      };
+
+      cards.forEach(function (card) {
+        card.addEventListener('click', function () { burst(card); });
+      });
+
+      /* ———————————————————————————————————————
          3D CARD TILT + CURSOR SHINE
          rAF-lerped for smoothness. Per-card state
          in WeakMap. CSS properties feed transforms.
          ——————————————————————————————————————— */
-      var cards = document.querySelectorAll('.card');
       var state = new WeakMap();
 
       cards.forEach(function (card) {
